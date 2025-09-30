@@ -27,14 +27,23 @@ a{color:var(--accent);text-decoration:none}
   position:sticky;top:24px;height:calc(100vh - 48px);display:flex;flex-direction:column;gap:14px;align-items:flex-start;
 }
 .sidebar-brand{display:flex;gap:12px;align-items:center}
-.logo{
-  width:56px;height:56px;background:transparent;color:var(--accent);
-  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;
-  border:2px solid var(--accent);border-radius:6px;box-shadow:0 6px 0 rgba(0,0,0,0.35);
-  text-transform:uppercase;letter-spacing:1px;
-}
 .brand-text strong{display:block;color:#fff}
 .muted{color:var(--muted);font-size:0.95rem}
+.logo-link{
+  display:block;
+  width:100%;
+  padding:6px 0;                /* small breathing room */
+}
+.logo-img{
+  width: calc(var(--sidebar-w) - 24px); /* almost the full sidebar width */
+  max-width:100%;
+  height:auto;                 /* preserve aspect ratio */
+  display:block;
+  object-fit:contain;
+  border-radius:4px;           /* optional: small corner rounding */
+  border: none;                /* remove red border */
+  box-shadow: none;            /* remove blocky shadow */
+}
 
 /* NAV */
 .side-nav{display:flex;flex-direction:column;gap:8px;width:100%}
@@ -55,7 +64,11 @@ a{color:var(--accent);text-decoration:none}
 .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12)); padding:20px; border-radius:var(--radius); box-shadow: 0 6px 18px rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.03); margin-bottom:var(--gap)}
 
 .section h2{font-family:var(--display);font-size:1.15rem;margin:0 0 10px 0;letter-spacing:1.5px;color:#fff}
-.section p{color:var(--muted);margin:0}
+.section p {
+  color: var(--muted);
+  margin: 0 0 1.5em 0;  /* only bottom spacing */
+  line-height: 1.6;
+}
 
 /* FEED */
 .feed-list{display:grid;gap:12px}
