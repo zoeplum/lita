@@ -3,199 +3,78 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>UNION NAME — Workers' Union</title>
-  <meta name="description" content="UNION NAME — representing workers, events, news and member resources." />
-  <style>
-    :root{
-      --bg:#f6f7fb; --card:#ffffff; --accent:#0b6d44; --muted:#6b7280;
-      --radius:12px; --maxw:1100px; --pad:20px; --heading:1.2rem;
-      --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;font-family:var(--sans);background:linear-gradient(180deg,#f7fafc, var(--bg));
-      color:#0b1220;line-height:1.45;padding:24px;display:flex;justify-content:center;
-    }
-    .wrap{width:100%;max-width:var(--maxw)}
-    header{
-      display:flex;gap:18px;align-items:center;justify-content:space-between;margin-bottom:18px;
-    }
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{
-      width:56px;height:56px;background:var(--accent);border-radius:10px;display:flex;
-      align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;
-      box-shadow:0 6px 18px rgba(11,109,68,0.12);
-    }
-    nav{display:flex;gap:12px;align-items:center}
-    nav a{padding:8px 12px;border-radius:8px;text-decoration:none;color:inherit;font-weight:600}
-    nav a.cta{background:var(--accent);color:#fff}
-    main{display:grid;grid-template-columns:1fr;gap:18px}
-    .hero{
-      background:linear-gradient(90deg,white 0%, rgba(11,109,68,0.03) 100%);
-      border-radius:var(--radius);padding:28px;display:flex;gap:20px;align-items:center;
-      box-shadow:0 6px 20px rgba(9,20,30,0.06);
-    }
-    .hero .left{flex:1}
-    .hero h1{margin:0 0 8px 0;font-size:1.6rem}
-    .hero p{margin:0;color:var(--muted)}
-    .hero .actions{margin-top:14px;display:flex;gap:10px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}
-    .btn.ghost{background:transparent;border:1px solid rgba(11,109,68,0.12)}
-    .card-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-    .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(9,20,30,0.04)}
-    .card h3{margin:0 0 8px 0;font-size:1rem}
-    .muted{color:var(--muted);font-size:0.95rem}
-    footer{margin-top:18px;padding:14px 10px;border-radius:10px;text-align:center;color:var(--muted);font-size:0.9rem}
-    /* events list */
-    .events{display:flex;flex-direction:column;gap:10px}
-    .event{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:10px;background:#fbfcfe}
-    .event .left{min-width:0}
-    .meta{font-size:0.85rem;color:var(--muted)}
-    /* contact */
-    form{display:grid;gap:8px}
-    input,textarea{padding:10px;border-radius:8px;border:1px solid #e6e9ee;font-size:0.95rem}
-    textarea{min-height:110px;resize:vertical}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    @media (max-width:720px){
-      header{flex-direction:column;align-items:flex-start}
-      nav{width:100%;overflow:auto}
-      .hero{flex-direction:column;align-items:flex-start}
-      .form-row{grid-template-columns:1fr}
-    }
-  </style>
+  <title>Lita — Workers' Union</title>
+  <meta name="description" content="Lita — representing workers, events, news and member resources." />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="wrap" role="document">
-    <header>
-      <div class="brand" aria-label="Union brand area">
-        <div class="logo" aria-hidden="true">U</div>
-        <div>
-          <div style="font-weight:800">UNION NAME</div>
-          <div class="muted">Workers • Solidarity • Action</div>
+  <div class="container">
+    <aside class="sidebar" aria-label="Site navigation">
+      <div class="sidebar-brand">
+        <div class="logo">L</div>
+        <div class="brand-text">
+          <strong>LITA</strong>
+          <div class="muted">Workers • Solidarity</div>
         </div>
       </div>
 
-      <nav aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#events">Events</a>
-        <a href="#join" class="cta">Join</a>
-        <a href="#contact">Contact</a>
+      <nav class="side-nav" role="navigation" aria-label="Sidebar">
+        <a class="tab active" href="#home" data-target="home">Home</a>
+        <a class="tab" href="#about" data-target="about">About</a>
+        <a class="tab" href="#events" data-target="events">Events</a>
+        <a class="tab" href="#join" data-target="join">Join</a>
+        <a class="tab" href="#contact" data-target="contact">Contact</a>
       </nav>
-    </header>
 
-    <main>
-      <section id="home" class="hero" aria-labelledby="hero-title">
-        <div class="left">
-          <h1 id="hero-title">Standing together for fair work</h1>
-          <p class="muted">We organize, support and defend the rights of workers across {Region}. Events, negotiations and member resources in one place.</p>
-          <div class="actions">
-            <a class="btn cta" href="#join">Become a member</a>
-            <a class="btn ghost" href="#events">Upcoming events</a>
-          </div>
+      <div class="sidebar-footer muted">© <span id="year"></span> Lita</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left">
+          <h1 class="site-title">Lita — Standing together for fair work</h1>
+          <p class="muted">We organize, support and defend the rights of workers across the region.</p>
         </div>
-        <div style="width:240px;text-align:right" aria-hidden="true">
-          <!-- Replace with your SVG or image -->
-          <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="0" width="160" height="120" rx="12" fill="#e9faf1"/>
-            <path d="M20 90 L40 40 L60 90 L80 50 L100 90 L120 30" stroke="#0b6d44" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <div class="top-actions">
+          <a class="btn cta" href="#join">Become a member</a>
         </div>
+      </header>
+
+      <section id="home" class="section card" tabindex="-1" aria-labelledby="home-title">
+        <h2 id="home-title">Welcome</h2>
+        <p class="muted">Quick intro copy here. Replace with your union's mission or tagline.</p>
       </section>
 
-      <section id="about" class="card-grid" aria-labelledby="about-title">
-        <div class="card">
-          <h3 id="about-title">Who we are</h3>
-          <p class="muted">UNION NAME represents workers in [sector]. We negotiate, educate, and provide legal support to members.</p>
-        </div>
-        <div class="card">
-          <h3>Our priorities</h3>
-          <ul class="muted">
-            <li>Fair pay & collective bargaining</li>
-            <li>Health & safety at work</li>
-            <li>Training & legal support</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>Resources</h3>
-          <p class="muted">Member guides, downloadable PDFs and contact info for legal aid and representation.</p>
-        </div>
+      <section id="about" class="section card" tabindex="-1" aria-labelledby="about-title">
+        <h2 id="about-title">Who we are</h2>
+        <p class="muted">UNION NAME represents workers in [sector]. We negotiate, educate, and provide legal support to members.</p>
       </section>
 
-      <section id="events" class="card" aria-labelledby="events-title">
-        <h3 id="events-title">Upcoming events</h3>
-        <div class="events" id="events-list">
-          <!-- Example events; edit to match your calendar -->
-          <div class="event"><div class="left"><strong>Monthly meeting</strong><div class="meta">Oct 12, 2025 — Community Hall</div></div><div class="muted">Free</div></div>
-          <div class="event"><div class="left"><strong>Negotiations workshop</strong><div class="meta">Nov 3, 2025 — Online</div></div><div class="muted">Members only</div></div>
+      <section id="events" class="section card" tabindex="-1" aria-labelledby="events-title">
+        <h2 id="events-title">Events & News</h2>
+        <div id="feed-list" class="feed-list" aria-live="polite">
+          <!-- initial items are injected by script -->
         </div>
+
+        <!-- sentinel for intersection observer to load more -->
+        <div id="feed-sentinel" class="sentinel" aria-hidden="true"></div>
+        <div id="feed-status" class="muted" style="margin-top:10px"></div>
       </section>
 
-      <section id="join" class="card" aria-labelledby="join-title">
-        <h3 id="join-title">Join the union</h3>
-        <p class="muted">Becoming a member is simple. Contact us and we’ll walk you through the process.</p>
-        <a class="btn cta" href="#contact">Contact us</a>
+      <section id="join" class="section card" tabindex="-1" aria-labelledby="join-title">
+        <h2 id="join-title">Join the union</h2>
+        <p class="muted">Short instructions on how to join. Contact the organizers for forms and next steps.</p>
       </section>
 
-      <section id="contact" class="card" aria-labelledby="contact-title">
-        <h3 id="contact-title">Contact</h3>
-        <p class="muted">Send us a message and a member of our team will reply.</p>
-
-        <!-- Replace data-form-endpoint value with your Formspree / form endpoint -->
-        <form id="contact-form" data-form-endpoint="https://formspree.io/f/your-id" novalidate>
-          <div class="form-row">
-            <input type="text" name="name" placeholder="Your full name" required aria-label="Name">
-            <input type="email" name="email" placeholder="Your email" required aria-label="Email">
-          </div>
-          <input type="text" name="subject" placeholder="Subject" aria-label="Subject">
-          <textarea name="message" placeholder="Your message" required aria-label="Message"></textarea>
-          <div style="display:flex;gap:8px;align-items:center">
-            <button type="submit" class="btn cta">Send message</button>
-            <div id="form-status" class="muted" style="font-size:0.95rem"></div>
-          </div>
-        </form>
+      <section id="contact" class="section card" tabindex="-1" aria-labelledby="contact-title">
+        <h2 id="contact-title">Contact</h2>
+        <p class="muted">Email: <a href="mailto:info@example.org">info@example.org</a> — Phone: +351 900 000 000</p>
       </section>
 
+      <footer class="site-footer muted">This is a simple static site. Edit content in GitHub repo to update pages.</footer>
     </main>
-
-    <footer>
-      © <span id="year"></span> UNION NAME — All rights reserved.
-    </footer>
   </div>
 
-  <script>
-    // small JS: form send (using fetch to the endpoint), and year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    const form = document.getElementById('contact-form');
-    const status = document.getElementById('form-status');
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      status.textContent = 'Sending…';
-      const endpoint = form.dataset.formEndpoint;
-      if(!endpoint || endpoint.includes('your-id')){
-        status.textContent = 'Please replace the form endpoint with your Formspree endpoint (see instructions).';
-        return;
-      }
-      const data = new FormData(form);
-      try{
-        const res = await fetch(endpoint, {
-          method:'POST',
-          body: data,
-          headers:{ 'Accept':'application/json' }
-        });
-        if(res.ok){
-          status.textContent = 'Message sent — thanks!';
-          form.reset();
-        } else {
-          const json = await res.json().catch(()=>null);
-          status.textContent = (json && json.error) ? json.error : 'Error sending form.';
-        }
-      } catch(err){
-        status.textContent = 'Network error. Try again later.';
-      }
-    });
-  </script>
+  <script src="script.js" defer></script>
 </body>
 </html>
