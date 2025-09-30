@@ -1,75 +1,88 @@
-/* styles.css
-   Easy customization via CSS variables below.
-   Change --accent to alter the main color.
+/* styles.css — dark / sharp / impactful theme
+   Replace your existing styles.css with this file.
+   To change accent, edit --accent below.
 */
+
 :root{
-  --accent:#0b6d44; /* change this to your accent color */
-  --bg:#f6f7fb;
-  --card:#ffffff;
-  --muted:#6b7280;
-  --radius:12px;
-  --maxw:1200px;
-  --gap:18px;
-  --sidebar-w:260px;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --accent: #e63946;       /* main accent (change to your preferred HEX) */
+  --bg: #07080a;           /* very dark canvas */
+  --card: #0f1416;         /* slightly lighter panels */
+  --muted: #9aa4ad;        /* muted copy on dark */
+  --muted-2: #6b7780;
+  --radius: 4px;           /* sharp, small rounding */
+  --maxw: 1200px;
+  --gap: 20px;
+  --sidebar-w: 260px;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --display: "Bebas Neue", --sans;
 }
 
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:var(--sans);color:#0b1220;background:linear-gradient(180deg,#f7fafc,var(--bg));-webkit-font-smoothing:antialiased}
-.container{
-  max-width:var(--maxw);margin:20px auto;padding:18px;display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:var(--gap);
-}
+html,body{height:100%;margin:0;background:var(--bg);color:#e6eef3;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+.container{max-width:var(--maxw);margin:28px auto;padding:20px;display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:var(--gap)}
 
-/* Sidebar */
+/* SIDEBAR */
 .sidebar{
-  position:sticky;top:24px;height:calc(100vh - 48px);display:flex;flex-direction:column;gap:16px;align-items:flex-start;
+  position:sticky;top:24px;height:calc(100vh - 48px);display:flex;flex-direction:column;gap:14px;align-items:flex-start;
 }
 .sidebar-brand{display:flex;gap:12px;align-items:center}
-.logo{width:56px;height:56px;background:var(--accent);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;box-shadow:0 6px 18px rgba(11,109,68,0.12)}
-.brand-text strong{display:block}
+.logo{
+  width:56px;height:56px;background:transparent;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;
+  border:2px solid var(--accent);border-radius:6px;box-shadow:0 6px 0 rgba(0,0,0,0.35);
+  text-transform:uppercase;letter-spacing:1px;
+}
+.brand-text strong{display:block;color:#fff}
 .muted{color:var(--muted);font-size:0.95rem}
 
+/* NAV */
 .side-nav{display:flex;flex-direction:column;gap:8px;width:100%}
 .side-nav .tab{
-  display:inline-block;padding:10px 12px;border-radius:8px;text-decoration:none;color:inherit;font-weight:700;border:1px solid transparent;
+  display:inline-block;padding:10px 14px;border-radius:6px;text-decoration:none;color:inherit;font-weight:700;border:1px solid transparent;
+  background:transparent;color:#cfe6ef;border-left:3px solid transparent;
 }
-.side-nav .tab:hover{background:rgba(11,109,68,0.04)}
-.side-nav .tab.active{background:var(--accent);color:#fff;box-shadow:0 6px 18px rgba(11,109,68,0.12)}
+.side-nav .tab:hover{background:rgba(255,255,255,0.02);color:#fff}
+.side-nav .tab.active{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-left-color:var(--accent); color:#fff;}
 
-.sidebar-footer{margin-top:auto;font-size:0.9rem}
-
-/* Main column & components */
+/* MAIN COLUMN */
 .main{min-height:80vh}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
-.site-title{margin:0;font-size:1.25rem}
-.btn{padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}
-.btn.cta{background:var(--accent);color:#fff}
-.card{background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:0 6px 20px rgba(9,20,30,0.06);margin-bottom:var(--gap)}
-.section h2{margin-top:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
+.site-title{margin:0;font-size:1.4rem;font-family:var(--display);letter-spacing:2px;color:#fff}
+.topbar .muted{color:var(--muted-2)}
 
-/* Feed / events */
+.btn{padding:10px 14px;border-radius:6px;font-weight:800;background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(230,57,70,0.12);border:none}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12)); padding:20px; border-radius:var(--radius); box-shadow: 0 6px 18px rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.03); margin-bottom:var(--gap)}
+
+.section h2{font-family:var(--display);font-size:1.15rem;margin:0 0 10px 0;letter-spacing:1.5px;color:#fff}
+.section p{color:var(--muted);margin:0}
+
+/* FEED */
 .feed-list{display:grid;gap:12px}
-.feed-item{display:flex;flex-direction:column;padding:12px;border-radius:10px;background:#fbfcfe;border:1px solid #eef2f6}
-.feed-item .title{font-weight:700;margin-bottom:6px}
+.feed-item{
+  display:flex;flex-direction:column;padding:14px;border-radius:6px;background:linear-gradient(180deg, #0c1618, #071011);
+  border:1px solid rgba(255,255,255,0.02);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.6);
+}
+.feed-item .title{font-weight:800;color:#fff;margin-bottom:6px;font-size:1rem;letter-spacing:0.6px}
 .feed-item .meta{font-size:0.9rem;color:var(--muted)}
+.feed-item .body{margin-top:8px;color:var(--muted)}
 
-/* sentinel visible region */
-.sentinel{height:60px;margin-top:12px}
+/* small UI details */
+.muted-small{color:var(--muted);font-size:0.9rem}
+.site-footer{text-align:center;margin-top:16px;padding:8px;color:var(--muted)}
 
-/* Footer */
-.site-footer{text-align:center;margin-top:16px;padding:8px}
-
-/* Responsive */
+/* responsive */
 @media (max-width:900px){
   .container{grid-template-columns:1fr;padding:12px}
   .sidebar{position:relative;height:auto;flex-direction:row;align-items:center;justify-content:space-between}
-  .side-nav{flex-direction:row;overflow:auto;gap:6px}
+  .side-nav{flex-direction:row;overflow:auto;gap:8px;padding-left:12px}
   .side-nav .tab{white-space:nowrap}
   .sidebar-footer{display:none}
 }
 
-/* Accessibility: reduced motion */
+/* smooth scrolling (but respect reduced motion) */
 @media (prefers-reduced-motion: reduce){
-  :root{scroll-behavior: auto}
+  html{scroll-behavior:auto}
 }
-html{scroll-behavior: smooth}
+html{scroll-behavior:smooth}
