@@ -1,7 +1,8 @@
-// script.js
-// Handles: year, sidebar tab clicks + active highlight, and infinite feed loading.
+// script.js (updated to be defensive + uses new Portuguese section IDs)
 
-document.getElementById('year').textContent = new Date().getFullYear();
+// set year only if an element exists (we removed the sidebar year)
+const yearEl = document.getElementById('year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 /* --- Smooth tab scrolling & activation --- */
 const tabs = Array.from(document.querySelectorAll('.side-nav .tab'));
@@ -9,12 +10,11 @@ const sections = tabs.map(t => document.getElementById(t.dataset.target));
 
 tabs.forEach(tab => {
   tab.addEventListener('click', (e) => {
-    // allow anchor default for accessibility but also smooth scroll
     e.preventDefault();
     const id = tab.dataset.target;
     const el = document.getElementById(id);
     if(!el) return;
-    // focus section for a11y
+    // focus for a11y and then smooth scroll
     el.focus({preventScroll:true});
     el.scrollIntoView({behavior:'smooth', block:'start'});
     setActiveTab(tab);
@@ -42,24 +42,23 @@ sections.forEach(s => {
   if(s) sectionObserver.observe(s);
 });
 
-/* --- Infinite feed --- */
+/* --- Infinite feed (unchanged behaviour) --- */
 const feedList = document.getElementById('feed-list');
 const sentinel = document.getElementById('feed-sentinel');
 const feedStatus = document.getElementById('feed-status');
 
 let page = 0;
-const perPage = 6;     // items to add per load — change if you like
+const perPage = 6;
 let loading = false;
 
-// placeholder generator for feed items; replace with real data or fetch from an API
 function generateItem(i){
   const d = new Date();
-  d.setDate(d.getDate() - i); // make items recent
+  d.setDate(d.getDate() - i);
   return {
     id: 'post-' + i,
-    title: `Update #${i} — union news & event`,
+    title: `Atualização #${i} — novidades`,
     meta: d.toLocaleDateString(),
-    body: `Short description for update ${i}. Replace with real content.`
+    body: `Pequena descrição da ação ${i}. Substitua com conteúdo real.`
   };
 }
 
@@ -73,13 +72,11 @@ function renderItem(item){
 }
 
 async function loadMore(){
-  if(loading) return;
+  if(loading || !feedList) return;
   loading = true;
-  feedStatus.textContent = 'Loading more…';
-  // simulate small delay (remove if you fetch real remote data)
+  feedStatus.textContent = 'A carregar...';
   await new Promise(r => setTimeout(r, 350));
 
-  // generate items
   const start = page * perPage;
   for(let i = start; i < start + perPage; i++){
     const obj = generateItem(i + 1);
@@ -89,19 +86,17 @@ async function loadMore(){
   page++;
   loading = false;
   feedStatus.textContent = '';
-  // optional: if you want to stop at some max, set sentinel observer to disconnect
 }
 
-// initial load
-loadMore();
+if(feedList) {
+  loadMore();
+  const feedObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        loadMore();
+      }
+    });
+  }, {root:null, rootMargin:'400px', threshold: 0});
 
-// sentinel observer: when visible, load more
-const feedObserver = new IntersectionObserver((entries)=>{
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      loadMore();
-    }
-  });
-}, {root:null, rootMargin:'400px', threshold: 0});
-
-feedObserver.observe(sentinel);
+  if(sentinel) feedObserver.observe(sentinel);
+}

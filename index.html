@@ -1,78 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-PT">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lita — Workers' Union</title>
+  <title>Lita — Sindicato</title>
   <!-- Display + body fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- anchor target for "top" (logo links here) -->
+  <div id="top" tabindex="-1"></div>
+
   <div class="container">
-    <aside class="sidebar" aria-label="Site navigation">
-      <div class="sidebar-brand">
-        <div class="logo">L</div>
-        <div class="brand-text">
-          <strong>LITA</strong>
-          <div class="muted">Workers • Solidarity</div>
-        </div>
-      </div>
+    <aside class="sidebar" aria-label="Navegação do site">
+      <!-- Logo only — clicking returns to very top -->
+      <a class="logo-link" href="#top" aria-label="Voltar ao topo">
+        <div class="logo" role="img" aria-hidden="true">L</div>
+      </a>
 
-      <nav class="side-nav" role="navigation" aria-label="Sidebar">
-        <a class="tab active" href="#home" data-target="home">Home</a>
-        <a class="tab" href="#about" data-target="about">About</a>
-        <a class="tab" href="#events" data-target="events">Events</a>
-        <a class="tab" href="#join" data-target="join">Join</a>
-        <a class="tab" href="#contact" data-target="contact">Contact</a>
+      <nav class="side-nav" role="navigation" aria-label="Menú lateral">
+        <a class="tab active" href="#apresentacao" data-target="apresentacao">APRESENTAÇÃO</a>
+        <a class="tab" href="#estatutos" data-target="estatutos">ESTATUTOS</a>
+        <a class="tab" href="#acao" data-target="acao">AÇÃO</a>
+        <a class="tab" href="#contactos" data-target="contactos">CONTACTOS</a>
       </nav>
-
-      <div class="sidebar-footer muted">© <span id="year"></span> Lita</div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="top-left">
-          <h1 class="site-title">Lita — Standing together for fair work</h1>
-          <p class="muted">We organize, support and defend the rights of workers across the region.</p>
+          <h1 class="site-title">Lita — Em união pelo trabalho justo</h1>
+          <p class="muted">Organizamos, apoiamos e defendemos os direitos dos trabalhadores na região.</p>
         </div>
         <div class="top-actions">
-          <a class="btn cta" href="#join">Become a member</a>
+          <a class="btn cta" href="#acao">Junta-te</a>
         </div>
       </header>
 
-      <section id="home" class="section card" tabindex="-1" aria-labelledby="home-title">
-        <h2 id="home-title">Welcome</h2>
-        <p class="muted">Quick intro copy here. Replace with your union's mission or tagline.</p>
+      <!-- APRESENTAÇÃO -->
+      <section id="apresentacao" class="section card" tabindex="-1" aria-labelledby="apresentacao-title">
+        <h2 id="apresentacao-title">APRESENTAÇÃO</h2>
+        <p class="muted">Lita é um sindicato independente dedicado à representação e proteção dos direitos laborais. Trabalhamos para melhores condições, formação e apoio legal aos nossos membros.</p>
       </section>
 
-      <section id="about" class="section card" tabindex="-1" aria-labelledby="about-title">
-        <h2 id="about-title">Who we are</h2>
-        <p class="muted">UNION NAME represents workers in [sector]. We negotiate, educate, and provide legal support to members.</p>
+      <!-- ESTATUTOS -->
+      <section id="estatutos" class="section card" tabindex="-1" aria-labelledby="estatutos-title">
+        <h2 id="estatutos-title">ESTATUTOS</h2>
+        <p class="muted">Aqui poderá consultar os estatutos e regulamentos do sindicato. Coloque os links para os PDFs no repositório e eu as integro para download se desejar.</p>
       </section>
 
-      <section id="events" class="section card" tabindex="-1" aria-labelledby="events-title">
-        <h2 id="events-title">Events & News</h2>
+      <!-- AÇÃO (events / feed) -->
+      <section id="acao" class="section card" tabindex="-1" aria-labelledby="acao-title">
+        <h2 id="acao-title">AÇÃO</h2>
+        <p class="muted">Notícias, ações e eventos em curso — acompanhe e participe.</p>
+
         <div id="feed-list" class="feed-list" aria-live="polite">
-          <!-- initial items are injected by script -->
+          <!-- feed items injected by script.js -->
         </div>
 
-        <!-- sentinel for intersection observer to load more -->
         <div id="feed-sentinel" class="sentinel" aria-hidden="true"></div>
         <div id="feed-status" class="muted" style="margin-top:10px"></div>
       </section>
 
-      <section id="join" class="section card" tabindex="-1" aria-labelledby="join-title">
-        <h2 id="join-title">Join the union</h2>
-        <p class="muted">Short instructions on how to join. Contact the organizers for forms and next steps.</p>
+      <!-- CONTACTOS -->
+      <section id="contactos" class="section card" tabindex="-1" aria-labelledby="contactos-title">
+        <h2 id="contactos-title">CONTACTOS</h2>
+        <p class="muted">Email: <a href="mailto:info@example.org">info@example.org</a> — Telefone: +351 900 000 000</p>
+        <p class="muted">Endereço: Rua Exemplo 1, Cidade</p>
       </section>
 
-      <section id="contact" class="section card" tabindex="-1" aria-labelledby="contact-title">
-        <h2 id="contact-title">Contact</h2>
-        <p class="muted">Email: <a href="mailto:info@example.org">info@example.org</a> — Phone: +351 900 000 000</p>
-      </section>
-
-      <footer class="site-footer muted">This is a simple static site. Edit content in GitHub repo to update pages.</footer>
+      <footer class="site-footer muted">Este é um site estático — edite o conteúdo no repositório para atualizar.</footer>
     </main>
   </div>
 
