@@ -1,6 +1,7 @@
-// script.js (updated to be defensive + uses new Portuguese section IDs)
+// script.js (mobile off-canvas + tabs + feed)
+// comportamento: abre/fecha sidebar no mobile, overlay, fecha sidebar quando clica numa tab
 
-// set year only if an element exists (we removed the sidebar year)
+// atualizar ano (se existir)
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -14,16 +15,21 @@ tabs.forEach(tab => {
     const id = tab.dataset.target;
     const el = document.getElementById(id);
     if(!el) return;
-    // focus for a11y and then smooth scroll
+    // focus for accessibility and then smooth scroll
     el.focus({preventScroll:true});
     el.scrollIntoView({behavior:'smooth', block:'start'});
     setActiveTab(tab);
+
+    // if mobile sidebar is open, close it after clicking a tab
+    if(document.body.classList.contains('sidebar-open')) {
+      closeSidebar();
+    }
   });
 });
 
 function setActiveTab(tab){
   tabs.forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
+  if(tab) tab.classList.add('active');
 }
 
 /* IntersectionObserver to update active tab on scroll */
@@ -42,7 +48,62 @@ sections.forEach(s => {
   if(s) sectionObserver.observe(s);
 });
 
-/* --- Infinite feed (unchanged behaviour) --- */
+/* --- Mobile sidebar (off-canvas) --- */
+const sidebar = document.querySelector('.sidebar');
+const mobileToggle = document.querySelector('.mobile-toggle');
+const overlay = document.getElementById('mobile-overlay');
+
+function openSidebar(){
+  if(!sidebar) return;
+  sidebar.classList.add('offcanvas', 'open');
+  document.body.classList.add('sidebar-open');
+  if(overlay){
+    overlay.hidden = false;
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeSidebar(){
+  if(!sidebar) return;
+  sidebar.classList.remove('open');
+  // give a tiny delay for transform to finish before removing offcanvas class? keep offcanvas class for reuse
+  document.body.classList.remove('sidebar-open');
+  if(overlay){
+    overlay.hidden = true;
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+}
+
+// ensure sidebar element has offcanvas class for mobile behaviour
+if(sidebar) sidebar.classList.add('offcanvas');
+
+// toggle button
+if(mobileToggle){
+  mobileToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    if(document.body.classList.contains('sidebar-open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+}
+
+// clicking overlay closes sidebar
+if(overlay){
+  overlay.addEventListener('click', () => closeSidebar());
+}
+
+// clicking logo link should close sidebar and go to top
+const logoLink = document.querySelector('.logo-link');
+if(logoLink){
+  logoLink.addEventListener('click', () => {
+    // close sidebar on mobile
+    if(document.body.classList.contains('sidebar-open')) closeSidebar();
+  });
+}
+
+/* --- Infinite feed (unchanged) --- */
 const feedList = document.getElementById('feed-list');
 const sentinel = document.getElementById('feed-sentinel');
 const feedStatus = document.getElementById('feed-status');
@@ -74,9 +135,8 @@ function renderItem(item){
 async function loadMore(){
   if(loading || !feedList) return;
   loading = true;
-  feedStatus.textContent = 'A carregar...';
+  if(feedStatus) feedStatus.textContent = 'A carregar...';
   await new Promise(r => setTimeout(r, 350));
-
   const start = page * perPage;
   for(let i = start; i < start + perPage; i++){
     const obj = generateItem(i + 1);
@@ -85,7 +145,7 @@ async function loadMore(){
   }
   page++;
   loading = false;
-  feedStatus.textContent = '';
+  if(feedStatus) feedStatus.textContent = '';
 }
 
 if(feedList) {
