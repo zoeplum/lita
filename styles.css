@@ -1,4 +1,4 @@
-/* styles.css — dark / sharp / impactful theme + mobile drawer
+/* styles.css — dark / sharp theme + mobile drawer + fixed hamburger
    Replace your existing styles.css with this file.
 */
 
@@ -14,7 +14,7 @@
   --sidebar-w: 260px;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   --display: "Bebas Neue", --sans;
-  --content-max: 840px; /* limit line length for readability */
+  --content-max: 840px;
 }
 
 /* Base */
@@ -71,11 +71,14 @@ a{color:var(--accent);text-decoration:none}
 .feed-item .meta{font-size:0.9rem;color:var(--muted)}
 .feed-item .body{margin-top:8px;color:var(--muted)}
 
-/* Mobile menu button (hidden on larger screens) */
+/* Mobile menu button (desktop hidden, mobile visible) */
+/* Default hidden (desktop) */
 .mobile-menu-btn{
   display:none;
   background:transparent;border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:8px;cursor:pointer;
+  align-items:center;justify-content:center;
 }
+/* Hamburger bar inside */
 .mobile-menu-btn .hamburger{
   display:inline-block;width:22px;height:2px;background:var(--accent);position:relative;
 }
@@ -86,7 +89,7 @@ a{color:var(--accent);text-decoration:none}
 .mobile-menu-btn .hamburger::before{top:-7px}
 .mobile-menu-btn .hamburger::after{top:7px}
 
-/* Mobile drawer/backdrop (initially hidden) */
+/* Mobile drawer/backdrop */
 .drawer-backdrop{
   position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:80;opacity:0;transition:opacity .22s ease;backdrop-filter: blur(2px);
 }
@@ -114,8 +117,26 @@ a{color:var(--accent);text-decoration:none}
   .container{grid-template-columns:1fr;padding:12px}
   /* hide desktop sidebar */
   .sidebar{display:none}
-  /* show mobile menu button */
-  .mobile-menu-btn{display:inline-block}
+  /* show mobile menu button as a fixed, always-on control */
+  .mobile-menu-btn{
+    display:inline-flex;
+    position: fixed;
+    right: 16px;
+    bottom: 18px;            /* fixed bottom-right */
+    z-index: 220;
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(230,57,70,0.12), rgba(230,57,70,0.06));
+    border: 1px solid rgba(255,255,255,0.04);
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+  }
+  .mobile-menu-btn:focus{outline: 3px solid rgba(230,57,70,0.18)}
+  .mobile-menu-btn .hamburger{background:var(--accent)}
+  .mobile-menu-btn .hamburger::before, .mobile-menu-btn .hamburger::after{background:var(--accent)}
+
   /* adjust content sizes for small screens */
   html,body{font-size:15px}
   .site-title{font-size:1.05rem}
