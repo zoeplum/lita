@@ -1,130 +1,102 @@
-// script.js
-// Mobile drawer + tab scrolling with reliable behavior on small screens.
+// script.js (updated to be defensive + uses new Portuguese section IDs)
 
-// defensive year (if present)
+// set year only if an element exists (we removed the sidebar year)
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* --- Collect tab links (desktop & mobile) --- */
-const desktopTabs = Array.from(document.querySelectorAll('.side-nav .tab'));
-const drawerTabs = Array.from(document.querySelectorAll('.m-tab')); // mobile drawer links
-const allTabs = desktopTabs.concat(drawerTabs);
+/* --- Smooth tab scrolling & activation --- */
+const tabs = Array.from(document.querySelectorAll('.side-nav .tab'));
+const sections = tabs.map(t => document.getElementById(t.dataset.target));
 
-// Build map target => links
-const tabsByTarget = {};
-allTabs.forEach(link => {
-  const target = link.dataset.target;
-  if(!target) return;
-  if(!tabsByTarget[target]) tabsByTarget[target] = [];
-  tabsByTarget[target].push(link);
+tabs.forEach(tab => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
+    const id = tab.dataset.target;
+    const el = document.getElementById(id);
+    if(!el) return;
+    // focus for a11y and then smooth scroll
+    el.focus({preventScroll:true});
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    setActiveTab(tab);
+  });
 });
 
-/* --- Utility: set active classes on desktop tabs --- */
-function setActiveByTarget(target){
-  desktopTabs.forEach(t => t.classList.remove('active'));
-  const list = tabsByTarget[target] || [];
-  list.forEach(l => {
-    // only add active to desktop tabs (desktopTabs set)
-    if(desktopTabs.includes(l)) l.classList.add('active');
-  });
+function setActiveTab(tab){
+  tabs.forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
 }
 
-/* --- IntersectionObserver: update active tab while scrolling --- */
-const sectionIds = Object.keys(tabsByTarget);
-const observedSections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+/* IntersectionObserver to update active tab on scroll */
 const observerOptions = { root: null, rootMargin: '0px 0px -40% 0px', threshold: 0 };
-const io = new IntersectionObserver(entries => {
+const sectionObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if(entry.isIntersecting){
-      setActiveByTarget(entry.target.id);
+      const id = entry.target.id;
+      const tab = tabs.find(t => t.dataset.target === id);
+      if(tab) setActiveTab(tab);
     }
   });
 }, observerOptions);
-observedSections.forEach(s => io.observe(s));
 
-/* --- Mobile drawer controls --- */
-const mobileBtn = document.getElementById('mobile-menu-btn');
-const mobileDrawer = document.getElementById('mobile-drawer');
-const drawerBackdrop = document.getElementById('drawer-backdrop');
-const drawerClose = document.getElementById('mobile-drawer-close');
-
-function openDrawer(){
-  if(!mobileDrawer || !drawerBackdrop || !mobileBtn) return;
-  mobileDrawer.classList.add('open');
-  mobileDrawer.setAttribute('aria-hidden', 'false');
-  drawerBackdrop.hidden = false;
-  // small delay to allow CSS to apply before showing opacity
-  requestAnimationFrame(() => { drawerBackdrop.style.opacity = '1'; });
-  mobileBtn.setAttribute('aria-expanded', 'true');
-  document.documentElement.style.overflow = 'hidden';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeDrawer(immediate = false){
-  if(!mobileDrawer || !drawerBackdrop || !mobileBtn) return;
-  mobileDrawer.classList.remove('open');
-  mobileDrawer.setAttribute('aria-hidden', 'true');
-  drawerBackdrop.style.opacity = '0';
-  // hide after transition unless immediate
-  const hideDelay = immediate ? 0 : 260;
-  setTimeout(()=> {
-    drawerBackdrop.hidden = true;
-  }, hideDelay);
-  mobileBtn.setAttribute('aria-expanded', 'false');
-  document.documentElement.style.overflow = '';
-  document.body.style.overflow = '';
-}
-
-// mobile button toggle
-if(mobileBtn){
-  mobileBtn.addEventListener('click', () => {
-    const expanded = mobileBtn.getAttribute('aria-expanded') === 'true';
-    if(expanded) closeDrawer(); else openDrawer();
-  });
-}
-if(drawerBackdrop){
-  drawerBackdrop.addEventListener('click', () => closeDrawer());
-}
-if(drawerClose){
-  drawerClose.addEventListener('click', () => closeDrawer());
-}
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape') closeDrawer();
+sections.forEach(s => {
+  if(s) sectionObserver.observe(s);
 });
 
-/* --- Tab click handling (desktop & mobile) --- */
-function onTabClick(e){
-  e.preventDefault();
-  const link = e.currentTarget;
-  const target = link.dataset.target;
-  if(!target) return;
-  const el = document.getElementById(target);
-  if(!el) return;
+/* --- Infinite feed (unchanged behaviour) --- */
+const feedList = document.getElementById('feed-list');
+const sentinel = document.getElementById('feed-sentinel');
+const feedStatus = document.getElementById('feed-status');
 
-  // If the clicked link is inside the mobile drawer, close the drawer first,
-  // wait for the close animation, then scroll. This prevents the drawer from
-  // covering the target after scroll.
-  const insideDrawer = !!link.closest && !!link.closest('#mobile-drawer');
+let page = 0;
+const perPage = 6;
+let loading = false;
 
-  if(insideDrawer){
-    // close drawer and scroll after animation completes
-    closeDrawer();
-    // match the CSS transition delay (260ms). Keep slight buffer.
-    const wait = 280;
-    setTimeout(() => {
-      el.focus({preventScroll:true});
-      el.scrollIntoView({behavior:'smooth', block:'start'});
-      setActiveByTarget(target);
-    }, wait);
-  } else {
-    // desktop: immediate scroll
-    el.focus({preventScroll:true});
-    el.scrollIntoView({behavior:'smooth', block:'start'});
-    setActiveByTarget(target);
+function generateItem(i){
+  const d = new Date();
+  d.setDate(d.getDate() - i);
+  return {
+    id: 'post-' + i,
+    title: `Atualização #${i} — novidades`,
+    meta: d.toLocaleDateString(),
+    body: `Pequena descrição da ação ${i}. Substitua com conteúdo real.`
+  };
+}
+
+function renderItem(item){
+  const wrap = document.createElement('div');
+  wrap.className = 'feed-item';
+  wrap.innerHTML = `<div class="title">${item.title}</div>
+                    <div class="meta">${item.meta}</div>
+                    <div class="body" style="margin-top:8px;color:var(--muted)">${item.body}</div>`;
+  return wrap;
+}
+
+async function loadMore(){
+  if(loading || !feedList) return;
+  loading = true;
+  feedStatus.textContent = 'A carregar...';
+  await new Promise(r => setTimeout(r, 350));
+
+  const start = page * perPage;
+  for(let i = start; i < start + perPage; i++){
+    const obj = generateItem(i + 1);
+    const node = renderItem(obj);
+    feedList.appendChild(node);
   }
+  page++;
+  loading = false;
+  feedStatus.textContent = '';
 }
 
-// attach handlers to all tabs
-allTabs.forEach(t => {
-  t.addEventListener('click', onTabClick);
-});
+if(feedList) {
+  loadMore();
+  const feedObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        loadMore();
+      }
+    });
+  }, {root:null, rootMargin:'400px', threshold: 0});
+
+  if(sentinel) feedObserver.observe(sentinel);
+}
