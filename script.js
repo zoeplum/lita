@@ -1,193 +1,132 @@
-// script.js (mobile off-canvas + tabs + feed)
-// behaviour: open/close sidebar only on mobile, overlay, close on tab click, and cleanup on resize
+// script.js
+// Adds mobile drawer behavior and keeps tab/scroll logic working on all sizes.
 
-// helper to detect mobile breakpoint (match CSS threshold)
-function isMobile() {
-  return window.matchMedia('(max-width:900px)').matches;
-}
-
-// update year if element exists
+// defensive year (if present)
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* --- Smooth tab scrolling & activation --- */
-const tabs = Array.from(document.querySelectorAll('.side-nav .tab'));
-const sections = tabs.map(t => document.getElementById(t.dataset.target));
+/* --- Gather tab links: desktop tabs + mobile drawer tabs --- */
+const desktopTabs = Array.from(document.querySelectorAll('.side-nav .tab'));
+const mobileTabs = Array.from(document.querySelectorAll('.drawer-nav .m-tab, .drawer-nav a.m-tab')) // attempt generic
+  .concat(Array.from(document.querySelectorAll('.drawer-nav .m-tab')));
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', (e) => {
-    e.preventDefault();
-    const id = tab.dataset.target;
-    const el = document.getElementById(id);
-    if(!el) return;
-    // focus for accessibility and then smooth scroll
-    el.focus({preventScroll:true});
-    el.scrollIntoView({behavior:'smooth', block:'start'});
-    setActiveTab(tab);
+// some pages have mobile nav anchors as .m-tab; but in our HTML they are .m-tab anchor tags
+const drawerTabs = Array.from(document.querySelectorAll('.m-tab'));
 
-    // if mobile sidebar is open, close it after clicking a tab
-    if(document.body.classList.contains('sidebar-open')) {
-      closeSidebar();
-    }
-  });
+// normalize tabs into one list for activation handling
+const allTabs = desktopTabs.concat(drawerTabs);
+
+// Map of target id => all link elements that point to it
+const tabsByTarget = {};
+allTabs.forEach(link => {
+  const target = link.dataset.target;
+  if(!target) return;
+  if(!tabsByTarget[target]) tabsByTarget[target] = [];
+  tabsByTarget[target].push(link);
 });
 
-function setActiveTab(tab){
-  tabs.forEach(t => t.classList.remove('active'));
-  if(tab) tab.classList.add('active');
+/* --- Tab click handling (desktop & mobile) --- */
+function onTabClick(e){
+  e.preventDefault();
+  const target = e.currentTarget.dataset.target;
+  if(!target) return;
+  const el = document.getElementById(target);
+  if(!el) return;
+
+  // focus & scroll
+  el.focus({preventScroll: true});
+  el.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+  // set active on all links that point to this target
+  setActiveByTarget(target);
+
+  // if mobile drawer open, close it
+  closeDrawer();
 }
 
-/* IntersectionObserver to update active tab on scroll */
+// attach click handlers
+allTabs.forEach(t => t.addEventListener('click', onTabClick));
+
+function setActiveByTarget(target){
+  // remove active class from all desktop tabs
+  desktopTabs.forEach(t => t.classList.remove('active'));
+  // add active to desktop tab(s) for this target
+  if(tabsByTarget[target]){
+    tabsByTarget[target].forEach(link => link.classList.add('active'));
+  }
+}
+
+/* IntersectionObserver: update active tab while scrolling */
+const sectionIds = Object.keys(tabsByTarget);
+const observedSections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
 const observerOptions = { root: null, rootMargin: '0px 0px -40% 0px', threshold: 0 };
-const sectionObserver = new IntersectionObserver(entries => {
+const io = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if(entry.isIntersecting){
-      const id = entry.target.id;
-      const tab = tabs.find(t => t.dataset.target === id);
-      if(tab) setActiveTab(tab);
+      setActiveByTarget(entry.target.id);
     }
   });
 }, observerOptions);
 
-sections.forEach(s => {
-  if(s) sectionObserver.observe(s);
-});
+observedSections.forEach(s => io.observe(s));
 
-/* --- Mobile sidebar (off-canvas) --- */
-const sidebar = document.querySelector('.sidebar');
-const mobileToggle = document.querySelector('.mobile-toggle');
-const overlay = document.getElementById('mobile-overlay');
+/* --- Mobile drawer logic --- */
+const mobileBtn = document.getElementById('mobile-menu-btn');
+const mobileDrawer = document.getElementById('mobile-drawer');
+const drawerBackdrop = document.getElementById('drawer-backdrop');
+const drawerClose = document.getElementById('mobile-drawer-close');
 
-function openSidebar(){
-  if(!sidebar) return;
-  // only use the offcanvas behaviour on mobile
-  if(isMobile()){
-    sidebar.classList.add('offcanvas', 'open');
-    document.body.classList.add('sidebar-open');
-    if(overlay){
-      overlay.hidden = false;
-      overlay.setAttribute('aria-hidden', 'false');
-    }
-  }
+function openDrawer(){
+  if(!mobileDrawer || !drawerBackdrop) return;
+  mobileDrawer.classList.add('open');
+  mobileDrawer.setAttribute('aria-hidden', 'false');
+  drawerBackdrop.hidden = false;
+  drawerBackdrop.style.opacity = '1';
+  mobileBtn.setAttribute('aria-expanded', 'true');
+  // prevent background scrolling
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
 }
 
-function closeSidebar(){
-  if(!sidebar) return;
-  // only remove open/offcanvas if mobile
-  if(isMobile()){
-    sidebar.classList.remove('open');
-    // keep offcanvas class until closed; remove it to ensure desktop isn't affected if viewport changes
-    sidebar.classList.remove('offcanvas');
-    document.body.classList.remove('sidebar-open');
-    if(overlay){
-      overlay.hidden = true;
-      overlay.setAttribute('aria-hidden', 'true');
-    }
-  } else {
-    // if not mobile but still open-state left somehow, ensure DOM is clean
-    sidebar.classList.remove('open', 'offcanvas');
-    document.body.classList.remove('sidebar-open');
-    if(overlay){
-      overlay.hidden = true;
-      overlay.setAttribute('aria-hidden', 'true');
-    }
-  }
+function closeDrawer(){
+  if(!mobileDrawer || !drawerBackdrop) return;
+  mobileDrawer.classList.remove('open');
+  mobileDrawer.setAttribute('aria-hidden', 'true');
+  drawerBackdrop.style.opacity = '0';
+  // hide after transition
+  setTimeout(()=> {
+    drawerBackdrop.hidden = true;
+  }, 260);
+  mobileBtn.setAttribute('aria-expanded', 'false');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
 }
 
-// toggle button
-if(mobileToggle){
-  mobileToggle.addEventListener('click', (e) => {
-    e.preventDefault();
-    if(document.body.classList.contains('sidebar-open')) {
-      closeSidebar();
-    } else {
-      openSidebar();
-    }
+if(mobileBtn){
+  mobileBtn.addEventListener('click', () => {
+    const expanded = mobileBtn.getAttribute('aria-expanded') === 'true';
+    if(expanded) closeDrawer(); else openDrawer();
   });
 }
-
-// clicking overlay closes sidebar
-if(overlay){
-  overlay.addEventListener('click', () => closeSidebar());
+if(drawerBackdrop){
+  drawerBackdrop.addEventListener('click', () => closeDrawer());
 }
-
-// clicking logo link should close sidebar and go to top
-const logoLink = document.querySelector('.logo-link');
-if(logoLink){
-  logoLink.addEventListener('click', () => {
-    if(document.body.classList.contains('sidebar-open')) closeSidebar();
-  });
+if(drawerClose){
+  drawerClose.addEventListener('click', () => closeDrawer());
 }
-
-// ensure responsive cleanup on resize: if transitioning to desktop, remove mobile classes
-window.addEventListener('resize', () => {
-  if(!isMobile()){
-    // remove mobile-only classes and hide overlay
-    if(sidebar){
-      sidebar.classList.remove('offcanvas', 'open');
-    }
-    document.body.classList.remove('sidebar-open');
-    if(overlay){
-      overlay.hidden = true;
-      overlay.setAttribute('aria-hidden', 'true');
-    }
-  }
+// close drawer on Escape key
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeDrawer();
 });
 
-/* --- Infinite feed (unchanged) --- */
-const feedList = document.getElementById('feed-list');
-const sentinel = document.getElementById('feed-sentinel');
-const feedStatus = document.getElementById('feed-status');
-
-let page = 0;
-const perPage = 6;
-let loading = false;
-
-function generateItem(i){
-  const d = new Date();
-  d.setDate(d.getDate() - i);
-  return {
-    id: 'post-' + i,
-    title: `Atualização #${i} — novidades`,
-    meta: d.toLocaleDateString(),
-    body: `Pequena descrição da ação ${i}. Substitua com conteúdo real.`
-  };
-}
-
-function renderItem(item){
-  const wrap = document.createElement('div');
-  wrap.className = 'feed-item';
-  wrap.innerHTML = `<div class="title">${item.title}</div>
-                    <div class="meta">${item.meta}</div>
-                    <div class="body" style="margin-top:8px;color:var(--muted)">${item.body}</div>`;
-  return wrap;
-}
-
-async function loadMore(){
-  if(loading || !feedList) return;
-  loading = true;
-  if(feedStatus) feedStatus.textContent = 'A carregar...';
-  await new Promise(r => setTimeout(r, 350));
-  const start = page * perPage;
-  for(let i = start; i < start + perPage; i++){
-    const obj = generateItem(i + 1);
-    const node = renderItem(obj);
-    feedList.appendChild(node);
-  }
-  page++;
-  loading = false;
-  if(feedStatus) feedStatus.textContent = '';
-}
-
-if(feedList) {
-  loadMore();
-  const feedObserver = new IntersectionObserver((entries)=>{
-    entries.forEach(entry => {
-      if(entry.isIntersecting){
-        loadMore();
-      }
-    });
-  }, {root:null, rootMargin:'400px', threshold: 0});
-
-  if(sentinel) feedObserver.observe(sentinel);
-}
+// when a link inside drawer is clicked, scroll and close drawer.
+// drawer links have class "m-tab"
+const drawerLinks = Array.from(document.querySelectorAll('.m-tab'));
+drawerLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    // default behavior prevented by onTabClick, which runs first because we attached earlier
+    // ensure drawer closes after the scroll command was sent
+    setTimeout(()=> closeDrawer(), 220);
+  });
+});
