@@ -1,7 +1,12 @@
 // script.js (mobile off-canvas + tabs + feed)
-// comportamento: abre/fecha sidebar no mobile, overlay, fecha sidebar quando clica numa tab
+// behaviour: open/close sidebar only on mobile, overlay, close on tab click, and cleanup on resize
 
-// atualizar ano (se existir)
+// helper to detect mobile breakpoint (match CSS threshold)
+function isMobile() {
+  return window.matchMedia('(max-width:900px)').matches;
+}
+
+// update year if element exists
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -55,27 +60,39 @@ const overlay = document.getElementById('mobile-overlay');
 
 function openSidebar(){
   if(!sidebar) return;
-  sidebar.classList.add('offcanvas', 'open');
-  document.body.classList.add('sidebar-open');
-  if(overlay){
-    overlay.hidden = false;
-    overlay.setAttribute('aria-hidden', 'false');
+  // only use the offcanvas behaviour on mobile
+  if(isMobile()){
+    sidebar.classList.add('offcanvas', 'open');
+    document.body.classList.add('sidebar-open');
+    if(overlay){
+      overlay.hidden = false;
+      overlay.setAttribute('aria-hidden', 'false');
+    }
   }
 }
 
 function closeSidebar(){
   if(!sidebar) return;
-  sidebar.classList.remove('open');
-  // give a tiny delay for transform to finish before removing offcanvas class? keep offcanvas class for reuse
-  document.body.classList.remove('sidebar-open');
-  if(overlay){
-    overlay.hidden = true;
-    overlay.setAttribute('aria-hidden', 'true');
+  // only remove open/offcanvas if mobile
+  if(isMobile()){
+    sidebar.classList.remove('open');
+    // keep offcanvas class until closed; remove it to ensure desktop isn't affected if viewport changes
+    sidebar.classList.remove('offcanvas');
+    document.body.classList.remove('sidebar-open');
+    if(overlay){
+      overlay.hidden = true;
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+  } else {
+    // if not mobile but still open-state left somehow, ensure DOM is clean
+    sidebar.classList.remove('open', 'offcanvas');
+    document.body.classList.remove('sidebar-open');
+    if(overlay){
+      overlay.hidden = true;
+      overlay.setAttribute('aria-hidden', 'true');
+    }
   }
 }
-
-// ensure sidebar element has offcanvas class for mobile behaviour
-if(sidebar) sidebar.classList.add('offcanvas');
 
 // toggle button
 if(mobileToggle){
@@ -98,10 +115,24 @@ if(overlay){
 const logoLink = document.querySelector('.logo-link');
 if(logoLink){
   logoLink.addEventListener('click', () => {
-    // close sidebar on mobile
     if(document.body.classList.contains('sidebar-open')) closeSidebar();
   });
 }
+
+// ensure responsive cleanup on resize: if transitioning to desktop, remove mobile classes
+window.addEventListener('resize', () => {
+  if(!isMobile()){
+    // remove mobile-only classes and hide overlay
+    if(sidebar){
+      sidebar.classList.remove('offcanvas', 'open');
+    }
+    document.body.classList.remove('sidebar-open');
+    if(overlay){
+      overlay.hidden = true;
+      overlay.setAttribute('aria-hidden', 'true');
+    }
+  }
+});
 
 /* --- Infinite feed (unchanged) --- */
 const feedList = document.getElementById('feed-list');
