@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Junta-te — LITA</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Small page-specific tweaks so it looks good even if styles.css changes */
+    .center-wrap{
+      min-height: 70vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+    .error-card{
+      max-width:720px;
+      width:100%;
+      text-align:center;
+      padding:28px;
+      border-radius:8px;
+    }
+    .error-code{
+      font-family: "Bebas Neue", system-ui, sans-serif;
+      font-size:2.2rem;
+      letter-spacing:2px;
+      margin-bottom:8px;
+      color:var(--accent);
+    }
+    .error-msg{color:var(--muted);margin-bottom:18px;line-height:1.6}
+    .back-row{display:flex;justify-content:center;gap:12px}
+  </style>
+</head>
+<body>
+  <main class="center-wrap">
+    <div class="error-card card" role="status" aria-live="polite">
+      <div class="error-code">Erro — Página Indisponível</div>
+      <h1 style="margin:6px 0 12px 0">Impossível carregar a página de adesão</h1>
+      <p class="error-msg">
+        Lamentamos, a página para te juntares está temporariamente indisponível.
+        Por favor tenta novamente mais tarde ou volta à página principal.
+      </p>
+
+      <div class="back-row">
+        <!-- prefer a normal link so it works without JS -->
+        <a class="btn" href="index.html" aria-label="Voltar ao início">Voltar ao início</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

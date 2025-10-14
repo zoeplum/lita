@@ -1,6 +1,6 @@
 /* styles.css — dark / sharp / impactful theme
-   Replace your existing styles.css with this file.
-   To change accent, edit --accent below.
+   Updated: adds mobile off-canvas sidebar and hamburger.
+   Keep --sidebar-w in root; mobile will override behavior below.
 */
 
 :root{
@@ -40,9 +40,9 @@ a{color:var(--accent);text-decoration:none}
   height:auto;                 /* preserve aspect ratio */
   display:block;
   object-fit:contain;
-  border-radius:4px;           /* optional: small corner rounding */
-  border: none;                /* remove red border */
-  box-shadow: none;            /* remove blocky shadow */
+  border-radius:4px;
+  border: none;
+  box-shadow: none;
 }
 
 /* NAV */
@@ -85,13 +85,130 @@ a{color:var(--accent);text-decoration:none}
 .muted-small{color:var(--muted);font-size:0.9rem}
 .site-footer{text-align:center;margin-top:16px;padding:8px;color:var(--muted)}
 
-/* responsive */
+/* Responsive (desktop -> mobile baseline) */
 @media (max-width:900px){
   .container{grid-template-columns:1fr;padding:12px}
-  .sidebar{position:relative;height:auto;flex-direction:row;align-items:center;justify-content:space-between}
-  .side-nav{flex-direction:row;overflow:auto;gap:8px;padding-left:12px}
-  .side-nav .tab{white-space:nowrap}
-  .sidebar-footer{display:none}
+  /* Make the sidebar an off-canvas panel on mobile */
+  .sidebar{
+    position:fixed;
+    top:0;
+    right:0;
+    height:100vh;
+    width:var(--sidebar-w);
+    max-width:82%;
+    background:linear-gradient(180deg, #071011, #0b1113);
+    padding:20px;
+    box-shadow: -12px 0 30px rgba(0,0,0,0.6);
+    transform: translateX(110%); /* hidden by default (off canvas) */
+    transition: transform 320ms cubic-bezier(.2,.9,.2,1);
+    z-index:1200;
+    align-items:flex-start;
+    overflow-y:auto;
+  }
+
+  /* When the page has the class 'sidebar-open' the panel slides in */
+  .sidebar-open .sidebar{
+    transform: translateX(0);
+  }
+
+  /* Backdrop that darkens page and captures clicks */
+  .sidebar-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.45);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 240ms ease;
+    z-index:1100;
+  }
+  .sidebar-open .sidebar-backdrop{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  /* Keep logo smaller for smaller screens */
+  .logo-img{
+    width:calc(var(--sidebar-w) - 64px);
+  }
+
+  /* Side nav horizontally on very small widths? keep vertical for offcanvas */
+  .side-nav{flex-direction:column;gap:10px;padding-top:8px}
+
+  /* Hamburger button: fixed bottom-right */
+  .hamburger{
+    position:fixed;
+    right:14px;
+    bottom:18px;
+    width:52px;
+    height:52px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.12));
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    z-index:1300;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hamburger-box{display:inline-block;width:28px;height:18px;position:relative}
+  .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after{
+    display:block;
+    background: #e6eef3;
+    height:2px;
+    width:100%;
+    border-radius:2px;
+    position:relative;
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+  .hamburger-inner::before, .hamburger-inner::after{
+    content:"";
+    position:absolute;
+    left:0;
+  }
+  .hamburger-inner::before{top:-8px}
+  .hamburger-inner::after{top:8px}
+
+  /* When sidebar open, show X by rotating bars */
+  .sidebar-open .hamburger .hamburger-inner{
+    transform: rotate(45deg);
+  }
+  .sidebar-open .hamburger .hamburger-inner::before{
+    transform: rotate(90deg) translateX(0);
+    top:0;
+  }
+  .sidebar-open .hamburger .hamburger-inner::after{
+    opacity:0;
+  }
+
+  /* Hide the desktop inline nav bar (if any) and keep sidebar accessible */
+  .sidebar{align-items:flex-start}
+
+  /* Place the CTA under the title/subtitle on mobile */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start; /* keep everything left-aligned */
+    gap: 8px;
+  }
+
+  /* ensure the left content (title + subtitle) stays above the button */
+  .top-left { order: 1; width: 100%; }
+
+  /* move the action under the left content */
+  .top-actions {
+    order: 2;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* change to center if you want the button centered */
+    margin-top: 0;
+  }
+
+  /* make the button easy to tap on mobile — full-width or natural width */
+  .top-actions .btn {
+    /* Option A: natural width (keeps desktop-like size) */
+    display: inline-block;
+    min-width: 120px;
 }
 
 /* smooth scrolling (but respect reduced motion) */

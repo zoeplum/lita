@@ -1,4 +1,5 @@
-// script.js (updated to be defensive + uses new Portuguese section IDs)
+// script.js (updated to handle mobile off-canvas sidebar + hamburger)
+// Based on your original behaviour but adds toggling + escape/backdrop handling.
 
 // set year only if an element exists (we removed the sidebar year)
 const yearEl = document.getElementById('year');
@@ -18,6 +19,11 @@ tabs.forEach(tab => {
     el.focus({preventScroll:true});
     el.scrollIntoView({behavior:'smooth', block:'start'});
     setActiveTab(tab);
+
+    // if mobile sidebar is open, close it after clicking a nav link
+    if(document.documentElement.classList.contains('sidebar-open')){
+      closeSidebar();
+    }
   });
 });
 
@@ -74,7 +80,7 @@ function renderItem(item){
 async function loadMore(){
   if(loading || !feedList) return;
   loading = true;
-  feedStatus.textContent = 'A carregar...';
+  if(feedStatus) feedStatus.textContent = 'A carregar...';
   await new Promise(r => setTimeout(r, 350));
 
   const start = page * perPage;
@@ -85,7 +91,7 @@ async function loadMore(){
   }
   page++;
   loading = false;
-  feedStatus.textContent = '';
+  if(feedStatus) feedStatus.textContent = '';
 }
 
 if(feedList) {
@@ -100,3 +106,59 @@ if(feedList) {
 
   if(sentinel) feedObserver.observe(sentinel);
 }
+
+/* --- Mobile sidebar toggling --- */
+const htmlEl = document.documentElement;
+const hamburger = document.getElementById('hamburger');
+const backdrop = document.getElementById('sidebar-backdrop');
+const sidebar = document.getElementById('site-sidebar');
+
+function openSidebar(){
+  htmlEl.classList.add('sidebar-open');
+  hamburger.setAttribute('aria-expanded','true');
+  backdrop.setAttribute('aria-hidden','false');
+  // Move focus into the sidebar for accessibility
+  const firstTabbable = sidebar.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+  if(firstTabbable) firstTabbable.focus();
+  // listen for escape
+  document.addEventListener('keydown', onKeyDown);
+}
+
+function closeSidebar(){
+  htmlEl.classList.remove('sidebar-open');
+  hamburger.setAttribute('aria-expanded','false');
+  backdrop.setAttribute('aria-hidden','true');
+  // return focus to hamburger
+  if(hamburger) hamburger.focus();
+  document.removeEventListener('keydown', onKeyDown);
+}
+
+function toggleSidebar(){
+  if(htmlEl.classList.contains('sidebar-open')) closeSidebar();
+  else openSidebar();
+}
+
+function onKeyDown(e){
+  if(e.key === 'Escape' || e.key === 'Esc'){
+    closeSidebar();
+  }
+}
+
+// Click handlers
+if(hamburger) hamburger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleSidebar();
+});
+
+// Clicking the backdrop closes the sidebar
+if(backdrop) backdrop.addEventListener('click', (e) => {
+  closeSidebar();
+});
+
+// If user resizes to desktop, ensure sidebar is closed and aria attributes reset
+window.addEventListener('resize', () => {
+  if(window.innerWidth > 900 && htmlEl.classList.contains('sidebar-open')){
+    // close visual mobile-only state (desktop will show sticky sidebar)
+    closeSidebar();
+  }
+});
