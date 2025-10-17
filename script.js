@@ -1,6 +1,3 @@
-const yearEl = document.getElementById('year');
-if (yearEl) yearEl.textContent = new Date().getFullYear();
-
 /* --- Smooth tab scrolling & activation --- */
 const tabs = Array.from(document.querySelectorAll('.side-nav .tab'));
 const sections = tabs.map(t => document.getElementById(t.dataset.target));
