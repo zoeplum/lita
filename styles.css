@@ -1,15 +1,10 @@
-/* styles.css — dark / sharp / impactful theme
-   Updated: adds mobile off-canvas sidebar and hamburger.
-   Keep --sidebar-w in root; mobile will override behavior below.
-*/
-
 :root{
-  --accent: #e63946;       /* main accent (change to your preferred HEX) */
-  --bg: #07080a;           /* very dark canvas */
-  --card: #0f1416;         /* slightly lighter panels */
-  --muted: #9aa4ad;        /* muted copy on dark */
+  --accent: #e63946;
+  --bg: #07080a;
+  --card: #0f1416;
+  --muted: #9aa4ad;
   --muted-2: #6b7780;
-  --radius: 4px;           /* sharp, small rounding */
+  --radius: 4px;
   --maxw: 1200px;
   --gap: 20px;
   --sidebar-w: 260px;
@@ -22,7 +17,7 @@ html,body{height:100%;margin:0;background:var(--bg);color:#e6eef3;font-family:va
 a{color:var(--accent);text-decoration:none}
 .container{max-width:var(--maxw);margin:28px auto;padding:20px;display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:var(--gap)}
 
-/* SIDEBAR */
+/* Sidebar */
 .sidebar{
   position:sticky;top:24px;height:calc(100vh - 48px);display:flex;flex-direction:column;gap:14px;align-items:flex-start;
 }
@@ -32,12 +27,12 @@ a{color:var(--accent);text-decoration:none}
 .logo-link{
   display:block;
   width:100%;
-  padding:6px 0;                /* small breathing room */
+  padding:6px 0;
 }
 .logo-img{
-  width: calc(var(--sidebar-w) - 24px); /* almost the full sidebar width */
+  width: calc(var(--sidebar-w) - 24px);
   max-width:100%;
-  height:auto;                 /* preserve aspect ratio */
+  height:auto;
   display:block;
   object-fit:contain;
   border-radius:4px;
@@ -45,7 +40,7 @@ a{color:var(--accent);text-decoration:none}
   box-shadow: none;
 }
 
-/* NAV */
+/* Nav */
 .side-nav{display:flex;flex-direction:column;gap:8px;width:100%}
 .side-nav .tab{
   display:inline-block;padding:10px 14px;border-radius:6px;text-decoration:none;color:inherit;font-weight:700;border:1px solid transparent;
@@ -54,7 +49,7 @@ a{color:var(--accent);text-decoration:none}
 .side-nav .tab:hover{background:rgba(255,255,255,0.02);color:#fff}
 .side-nav .tab.active{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-left-color:var(--accent); color:#fff;}
 
-/* MAIN COLUMN */
+/* Main column */
 .main{min-height:80vh}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px}
 .site-title{margin:0;font-size:1.4rem;font-family:var(--display);letter-spacing:2px;color:#fff}
@@ -66,11 +61,11 @@ a{color:var(--accent);text-decoration:none}
 .section h2{font-family:var(--display);font-size:1.15rem;margin:0 0 10px 0;letter-spacing:1.5px;color:#fff}
 .section p {
   color: var(--muted);
-  margin: 0 0 1.5em 0;  /* only bottom spacing */
+  margin: 0 0 1.5em 0;
   line-height: 1.6;
 }
 
-/* FEED */
+/* Feed */
 .feed-list{display:grid;gap:12px}
 .feed-item{
   display:flex;flex-direction:column;padding:14px;border-radius:6px;background:linear-gradient(180deg, #0c1618, #071011);
@@ -81,7 +76,7 @@ a{color:var(--accent);text-decoration:none}
 .feed-item .meta{font-size:0.9rem;color:var(--muted)}
 .feed-item .body{margin-top:8px;color:var(--muted)}
 
-/* small UI details */
+/* Small UI details */
 .muted-small{color:var(--muted);font-size:0.9rem}
 .site-footer{text-align:center;margin-top:16px;padding:8px;color:var(--muted)}
 
@@ -188,7 +183,7 @@ a{color:var(--accent);text-decoration:none}
   /* Place the CTA under the title/subtitle on mobile */
   .topbar {
     flex-direction: column;
-    align-items: flex-start; /* keep everything left-aligned */
+    align-items: flex-start;
     gap: 8px;
   }
 
@@ -200,18 +195,17 @@ a{color:var(--accent);text-decoration:none}
     order: 2;
     width: 100%;
     display: flex;
-    justify-content: flex-start; /* change to center if you want the button centered */
+    justify-content: flex-start;
     margin-top: 0;
   }
 
-  /* make the button easy to tap on mobile — full-width or natural width */
+  /* make the button easy to tap on mobile */
   .top-actions .btn {
-    /* Option A: natural width (keeps desktop-like size) */
     display: inline-block;
     min-width: 120px;
 }
 
-/* smooth scrolling (but respect reduced motion) */
+/* smooth scrolling */
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
 }

@@ -1,10 +1,3 @@
-// script.js (updated to handle mobile off-canvas sidebar + hamburger)
-// Based on your original behaviour but adds toggling + escape/backdrop handling.
-
-// set year only if an element exists (we removed the sidebar year)
-const yearEl = document.getElementById('year');
-if (yearEl) yearEl.textContent = new Date().getFullYear();
-
 /* --- Smooth tab scrolling & activation --- */
 const tabs = Array.from(document.querySelectorAll('.side-nav .tab'));
 const sections = tabs.map(t => document.getElementById(t.dataset.target));
@@ -48,7 +41,7 @@ sections.forEach(s => {
   if(s) sectionObserver.observe(s);
 });
 
-/* --- Infinite feed (unchanged behaviour) --- */
+/* --- Infinite feed --- */
 const feedList = document.getElementById('feed-list');
 const sentinel = document.getElementById('feed-sentinel');
 const feedStatus = document.getElementById('feed-status');
